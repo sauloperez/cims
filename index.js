@@ -79,9 +79,11 @@ const getLocation = async (name) => {
     fields: ["place_id"],
   }
 
+  let placeId;
+
   try {
     const response = await google.findPlaceFromText({ params: queryParams })
-    const placeId = response.data.candidates[0].place_id;
+    placeId = response.data.candidates[0].place_id;
 
     if (!placeId) { return; }
   } catch (error) {
@@ -91,14 +93,15 @@ const getLocation = async (name) => {
 
   try {
     const placeParams = {
-      placeId,
+      place_id: placeId,
       key: process.env.GOOGLE_MAPS_API_KEY,
       fields: ["formatted_address", "url", "types", "geometry"]
     };
-    return await google.placeDetails({ params: placeParams });
+    const result = await google.placeDetails({ params: placeParams });
+    return result.data.result;
   } catch (error) {
     console.log("Error finding location")
-    console.log(error.response);
+    console.log(error);
   }
 }
 
