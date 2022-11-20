@@ -70,7 +70,7 @@ getSummitsFromDb = async () => {
 }
 
 const getLocation = async (name) => {
-  console.log(`   * ${name}...`)
+  console.log(`   * ${name}`)
 
   const queryParams = {
     input: name,
@@ -111,8 +111,10 @@ do_thing = async () => {
   console.log(`=> Searching locations...`)
 
   for (const { pageId, name } of summits) {
-    pageToLocation[pageId] = await getLocation(name);
+    const location = await getLocation(name)
+    console.log("\t", location);
+    pageToLocation[pageId] = location;
   }
 }
 
-do_thing().then(() => console.log(pageToLocation));
+do_thing();
