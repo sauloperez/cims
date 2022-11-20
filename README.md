@@ -33,3 +33,21 @@ $ node index.js
   url: 'https://maps.google.com/?cid=5990109973768037386'
 }
 ```
+
+### providing the name of a mountain
+
+```js
+$ node index.js "Hinterer Seelenkogel"
+=> Loading cims database cc78daddfacd4b54bc67965f5602dc1d...
+=> Searching location...
+   * Hinterer Seelenkogel
+         {
+  formatted_address: 'Hinterer Seelenkogel, 39013 Moos in Passeier, Autonomous Province of Bolzano – South Tyrol, Italy',
+  geometry: {
+    location: { lat: 46.8, lng: 11.05 },
+    viewport: { northeast: [Object], southwest: [Object] }
+  },
+  types: [ 'natural_feature', 'establishment' ],
+  url: 'https://maps.google.com/?cid=8800540990192435257'
+}
+```
