@@ -2,8 +2,9 @@
 
 ## Requirements
 
-You need to first export the SECRET_TOKEN env var, to use my workspace's `cims`
-Notion integration, and the GOOGLE_MAPS_API_KEY one.
+Copy the .env file with `cp .env{.example,}` and provide the appropriate values.
+
+Note the Google account you use must have the Places API enabled.
 
 ## Usage
 
