@@ -4,6 +4,9 @@ const googleRequire = require("@googlemaps/google-maps-services-js");
 const GoogleClient = googleRequire.Client;
 const dotenv = require("dotenv")
 
+const args = process.argv.slice(2);
+const summitName = args[0];
+
 dotenv.config()
 
 const databaseId = process.env.NOTION_DATABASE_ID
@@ -64,6 +67,10 @@ getSummitsFromDb = async () => {
       .join("")
 
     summits.push({ pageId, name });
+
+    if (summitName && summitName == name) {
+      break;
+    }
   }
 
   return summits;
@@ -108,12 +115,23 @@ const getLocation = async (name) => {
 do_thing = async () => {
   const summits = await getSummitsFromDb();
 
-  console.log(`=> Searching locations...`)
+  if (summitName) {
+    console.log(`=> Searching location...`)
 
-  for (const { pageId, name } of summits) {
+    const { pageId, name } = summits.find((summit) => summit.name == summitName);
+
     const location = await getLocation(name)
     console.log("\t", location);
     pageToLocation[pageId] = location;
+  }
+  else {
+    console.log(`=> Searching locations...`)
+
+    for (const { pageId, name } of summits) {
+      const location = await getLocation(name)
+      console.log("\t", location);
+      pageToLocation[pageId] = location;
+    }
   }
 }
 
