@@ -1,0 +1,13 @@
+{
+  "name": "cims",
+  "version": "1.0.0",
+  "description": "tiny script to update Notion pages with geospatial locations ",
+  "main": "index.js",
+  "author": "Pau Perez",
+  "license": "MIT",
+  "dependencies": {
+    "@googlemaps/google-maps-services-js": "^3.3.16",
+    "@notionhq/client": "^2.2.2",
+    "dotenv": "^16.0.3"
+  }
+}
