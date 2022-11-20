@@ -40,6 +40,8 @@ const getPropertyValue = async ({ pageId, propertyId }) => {
 }
 
 getSummitsFromDb = async () => {
+  console.log(`=> Loading cims database ${databaseId}...`)
+
   const pages = [];
 
   const { results } = await notion.databases.query({
@@ -68,42 +70,46 @@ getSummitsFromDb = async () => {
 }
 
 const getLocation = async (name) => {
-  const params = {
+  console.log(`   * ${name}...`)
+
+  const queryParams = {
     input: name,
     inputtype: "textquery",
     key: process.env.GOOGLE_MAPS_API_KEY,
-    fields: ["place_id", "name", "formatted_address", "type", "geometry"],
+    fields: ["place_id"],
   }
-  const response = await google.findPlaceFromText({ params})
-  return response.data.candidates[0];
+
+  try {
+    const response = await google.findPlaceFromText({ params: queryParams })
+    const placeId = response.data.candidates[0].place_id;
+
+    if (!placeId) { return; }
+  } catch (error) {
+    console.log("Error querying text")
+    console.log(error.response.data.error_message);
+  }
+
+  try {
+    const placeParams = {
+      placeId,
+      key: process.env.GOOGLE_MAPS_API_KEY,
+      fields: ["formatted_address", "url", "types", "geometry"]
+    };
+    return await google.placeDetails({ params: placeParams });
+  } catch (error) {
+    console.log("Error finding location")
+    console.log(error.response);
+  }
 }
 
 do_thing = async () => {
   const summits = await getSummitsFromDb();
+
+  console.log(`=> Searching locations...`)
+
   for (const { pageId, name } of summits) {
     pageToLocation[pageId] = await getLocation(name);
   }
 }
 
-// do_thing().then(() => console.log(pageToLocation));
-
-const queryParams = {
-  input: "Piz Buin",
-  inputtype: "textquery",
-  key: process.env.GOOGLE_MAPS_API_KEY,
-  fields: ["place_id"],
-}
-google
-  .findPlaceFromText({ params: queryParams })
-  .then((r) => (r.data.candidates[0].place_id))
-  .then((place_id) => {
-    const placeParams = {
-      place_id,
-      key: process.env.GOOGLE_MAPS_API_KEY,
-      fields: ["formatted_address", "url", "types", "geometry"]
-    };
-    google.placeDetails({ params: placeParams }).then((r) => {
-      console.log(r.data.result);
-    });
-  });
-
+do_thing().then(() => console.log(pageToLocation));
